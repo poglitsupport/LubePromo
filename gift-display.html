@@ -1,17 +1,177 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Your Gift</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-        h1 { color: #2e7d32; }
-        p { font-size: 18px; }
-        .gift { font-weight: bold; color: #2e7d32; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pinnacle Oil and Gas - Lube Up! Gift Up!!</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Confetti JS -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  <style>
+    body {
+      background-image: url('https://images.unsplash.com/photo-1505455184861-7709f4e0a251?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      font-family: 'Segoe UI', sans-serif;
+    }
+  </style>
 </head>
-<body>
-    <h1 id="welcome">Thank you for your purchase!</h1>
-    <p id="gift">Your Gift(s): Loading...</p>
-    <p>You’ll also receive an email and WhatsApp message with redemption details.</p>
+<body class="min-h-screen flex items-center justify-center px-4 py-10">
+
+  <!-- Form Container -->
+  <div id="formContainer" class="w-full max-w-xl p-6 bg-white bg-opacity-95 rounded-2xl shadow-2xl backdrop-blur-md relative z-10">
+    <h1 class="text-2xl font-bold text-center text-gray-800">Pinnacle Oil and Gas Limited</h1>
+    <h2 class="text-xl text-center font-extrabold bg-gradient-to-r from-red-500 to-yellow-500 bg-clip-text text-transparent animate-pulse mt-2">Lube Up! Gift Up!! 🛢️🎁</h2>
+    
+    <div class="text-center text-gray-600 italic mt-3">🎉 Welcome to Pinnacle! 💖</div>
+    <p class="text-center text-gray-800 mt-1 mb-4">
+      Congratulations on choosing Pinnacle, your premium personal lube brand! 🙌✨🎁 Fill this form to get an instant gift – it only takes a minute! 📝😄
+    </p>
+
+    <form id="giftForm" class="space-y-4" onsubmit="event.preventDefault(); validateForm();">
+      <div>
+        <label for="fullName" class="block text-sm font-medium text-gray-800">Full Name *</label>
+        <input type="text" id="fullName" name="fullName" required class="mt-1 w-full px-4 py-2 rounded-lg border-2 border-gray-300 focus:border-red-500 outline-none" placeholder="Enter your full name" />
+        <div id="fullNameError" class="text-red-600 text-xs mt-1"></div>
+      </div>
+
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-800">Email (optional)</label>
+        <input type="email" id="email" name="email" class="mt-1 w-full px-4 py-2 rounded-lg border-2 border-gray-300 focus:border-red-500 outline-none" placeholder="example@email.com" />
+        <div id="emailError" class="text-red-600 text-xs mt-1"></div>
+      </div>
+
+      <div>
+        <label for="phone" class="block text-sm font-medium text-gray-800">Phone Number *</label>
+        <input type="tel" id="phone" name="phone" required maxlength="11" class="mt-1 w-full px-4 py-2 rounded-lg border-2 border-gray-300 focus:border-red-500 outline-none" placeholder="08012345678" />
+        <div id="phoneError" class="text-red-600 text-xs mt-1"></div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-800 mb-1">Volume(s) Purchased *</label>
+        <div class="flex flex-wrap gap-3">
+          <label class="inline-flex items-center gap-2"><input type="checkbox" name="quantity" value="1L" class="accent-red-500" />1L</label>
+          <label class="inline-flex items-center gap-2"><input type="checkbox" name="quantity" value="4L" class="accent-red-500" />4L</label>
+          <label class="inline-flex items-center gap-2"><input type="checkbox" name="quantity" value="25L" class="accent-red-500" />25L</label>
+        </div>
+        <div id="quantityError" class="text-red-600 text-xs mt-1"></div>
+      </div>
+
+      <div class="text-center">
+        <button type="submit" id="submitBtn" class="w-full px-4 py-2 font-semibold rounded-lg bg-gradient-to-r from-red-600 to-yellow-500 text-white shadow-lg hover:scale-105 transition duration-300">Get My Gift 🎁</button>
+      </div>
+
+      <div class="text-center text-sm mt-2">
+        <a href="https://www.pinnacleoilandgas.com" class="text-blue-600 underline" target="_blank">Visit Our Website</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Modal -->
+  <div id="giftModal" class="fixed inset-0 hidden z-50 bg-black bg-opacity-70 flex items-center justify-center">
+    <div class="bg-white rounded-2xl p-6 text-center shadow-2xl w-80 max-w-[90vw]">
+      <h3 class="text-xl font-bold text-gray-800">🎉 Congratulations! You have won: 🎉</h3>
+      <p id="giftMessage" class="text-green-700 text-lg font-semibold mt-2"></p>
+      <p class="text-xs italic text-red-500 mt-2">
+        Show proof of lubricant purchase to redeem your gift at the place of purchase. You may also receive an email with details about your gift. Share the joy! 🤩 🎉🚗🛢️🎁
+      </p>
+      <button onclick="closeModal()" class="mt-4 px-4 py-2 rounded-lg bg-gradient-to-r from-red-600 to-yellow-500 text-white shadow hover:scale-105 transition">Close</button>
+    </div>
+  </div>
+
+  <script>
+    const giftMappings = {
+      '1L': ['FACE CAP', 'DISPOSABLE RAINCOAT'],
+      '4L': ['NOTEBOOK', 'PEN', 'POP SOCKET', 'MUG', 'NAPKIN BOX', 'MINI UMBRELLA'],
+      '25L': ['LARGE UMBRELLA']
+    };
+
+    let giftIndices = JSON.parse(localStorage.getItem('giftIndices') || '{}');
+    for (let volume in giftMappings) {
+      if (!giftIndices[volume]) giftIndices[volume] = 0;
+    }
+
+    function allocateGifts(quantities) {
+      let allocated = [];
+      quantities.forEach(qty => {
+        const gifts = giftMappings[qty];
+        if (gifts) {
+          const idx = giftIndices[qty] % gifts.length;
+          allocated.push(gifts[idx]);
+          giftIndices[qty] = (idx + 1) % gifts.length;
+        }
+      });
+      localStorage.setItem('giftIndices', JSON.stringify(giftIndices));
+      return allocated.length ? allocated : ['No Gift Allocated'];
+    }
+
+    function formatGifts(gifts) {
+      if (gifts.length === 1) return `<span class="text-green-700 font-bold">${gifts[0]}</span>`;
+      if (gifts.length === 2) return `<span class="text-green-700 font-bold">${gifts[0]}</span> and <span class="text-green-700 font-bold">${gifts[1]}</span>`;
+      return gifts.slice(0, -1).map(g => `<span class="text-green-700 font-bold">${g}</span>`).join(', ') + ` and <span class="text-green-700 font-bold">${gifts[gifts.length - 1]}</span>`;
+    }
+
+    function validateForm() {
+      const fullName = document.getElementById('fullName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const quantities = Array.from(document.querySelectorAll('input[name="quantity"]:checked')).map(el => el.value);
+
+      document.getElementById('fullNameError').textContent = '';
+      document.getElementById('emailError').textContent = '';
+      document.getElementById('phoneError').textContent = '';
+      document.getElementById('quantityError').textContent = '';
+
+      let valid = true;
+      if (!fullName) {
+        document.getElementById('fullNameError').textContent = 'Full Name is required';
+        valid = false;
+      }
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        document.getElementById('emailError').textContent = 'Invalid email';
+        valid = false;
+      }
+      if (!phone || !/^\d{11}$/.test(phone)) {
+        document.getElementById('phoneError').textContent = 'Phone must be 11 digits';
+        valid = false;
+      }
+      if (quantities.length === 0) {
+        document.getElementById('quantityError').textContent = 'Select at least one volume';
+        valid = false;
+      }
+
+      if (valid) {
+        const gifts = allocateGifts(quantities);
+        document.getElementById('giftMessage').innerHTML = formatGifts(gifts);
+        document.getElementById('giftModal').classList.remove('hidden');
+
+        confetti({
+          particleCount: 150,
+          spread: 100,
+          origin: { x: 0.5, y: 0.5 }
+        });
+
+        const submission = {
+          fullName,
+          email,
+          phone,
+          quantities,
+          gifts,
+          timestamp: new Date().toISOString()
+        };
+        let submissions = JSON.parse(localStorage.getItem('giftSubmissions') || '[]');
+        submissions.push(submission);
+        localStorage.setItem('giftSubmissions', JSON.stringify(submissions));
+
+        document.getElementById('giftForm').reset();
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('giftModal').classList.add('hidden');
+    }
+  </script>
+
 </body>
 </html>
