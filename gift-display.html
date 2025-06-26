@@ -15,6 +15,15 @@
       background-attachment: fixed;
       font-family: 'Segoe UI', sans-serif;
     }
+
+    @keyframes pop {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.25); }
+    }
+
+    .animate-pop {
+      animation: pop 1s infinite;
+    }
   </style>
 </head>
 <body class="min-h-screen flex items-center justify-center px-4 py-10">
@@ -22,7 +31,9 @@
   <!-- Form Container -->
   <div id="formContainer" class="w-full max-w-xl p-6 bg-white bg-opacity-95 rounded-2xl shadow-2xl backdrop-blur-md relative z-10">
     <h1 class="text-2xl font-bold text-center text-gray-800">Pinnacle Oil and Gas Limited</h1>
-    <h2 class="text-xl text-center font-extrabold bg-gradient-to-r from-red-500 to-yellow-500 bg-clip-text text-transparent animate-pulse mt-2">Lube Up! Gift Up!! 🛢️🎁</h2>
+    <h2 class="text-2xl md:text-3xl text-center font-extrabold bg-gradient-to-r from-red-500 to-yellow-500 bg-clip-text text-transparent animate-pop mt-2">
+      Lube Up! Gift Up!! 🛢️🎁
+    </h2>
     
     <div class="text-center text-gray-600 italic mt-3">🎉 Welcome to Pinnacle! 💖</div>
     <p class="text-center text-gray-800 mt-1 mb-4">
@@ -44,7 +55,7 @@
 
       <div>
         <label for="phone" class="block text-sm font-medium text-gray-800">Phone Number *</label>
-        <input type="tel" id="phone" name="phone" required maxlength="11" class="mt-1 w-full px-4 py-2 rounded-lg border-2 border-gray-300 focus:border-red-500 outline-none" placeholder="08012345678" />
+        <input type="tel" id="phone" name="phone" required maxlength="11" pattern="\d{11}" inputmode="numeric" class="mt-1 w-full px-4 py-2 rounded-lg border-2 border-gray-300 focus:border-red-500 outline-none" placeholder="08012345678" />
         <div id="phoneError" class="text-red-600 text-xs mt-1"></div>
       </div>
 
@@ -69,12 +80,14 @@
   </div>
 
   <!-- Modal -->
-  <div id="giftModal" class="fixed inset-0 hidden z-50 bg-black bg-opacity-70 flex items-center justify-center">
+  <div id="giftModal" class="fixed inset-0 hidden z-50 bg-black bg-opacity-70 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="giftMessage">
     <div class="bg-white rounded-2xl p-6 text-center shadow-2xl w-80 max-w-[90vw]">
       <h3 class="text-xl font-bold text-gray-800">🎉 Congratulations! You have won: 🎉</h3>
       <p id="giftMessage" class="text-green-700 text-lg font-semibold mt-2"></p>
       <p class="text-xs italic text-red-500 mt-2">
-        Show proof of lubricant purchase to redeem your gift at the place of purchase. You may also receive an email with details about your gift. <strong>Buy more, get more and share the joy!</strong> 🤩 🎉🚗🛢️🎁
+        Show proof of lubricant purchase to redeem your gift at the place of purchase. You may also receive an email with details about your gift.
+        <br><strong>Buy more, get more and share the joy!</strong>
+        <br>🤩 🎉🚗🛢️🎁
       </p>
       <button onclick="closeModal()" class="mt-4 px-4 py-2 rounded-lg bg-gradient-to-r from-red-600 to-yellow-500 text-white shadow hover:scale-105 transition">Close</button>
     </div>
