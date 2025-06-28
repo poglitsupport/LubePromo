@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Pinnacle Oil and Gas - Lube Up! Gift Up!!</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Confetti JS -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
   <style>
     body {
@@ -64,6 +63,7 @@
         <div class="flex flex-wrap gap-3">
           <label class="inline-flex items-center gap-2"><input type="checkbox" name="quantity" value="1L" class="accent-red-500" />1L</label>
           <label class="inline-flex items-center gap-2"><input type="checkbox" name="quantity" value="4L" class="accent-red-500" />4L</label>
+          <label class="inline-flex items-center gap-2"><input type="checkbox" name="quantity" value="5L" class="accent-red-500" />5L</label>
           <label class="inline-flex items-center gap-2"><input type="checkbox" name="quantity" value="25L" class="accent-red-500" />25L</label>
         </div>
         <div id="quantityError" class="text-red-600 text-xs mt-1"></div>
@@ -97,6 +97,7 @@
     const giftMappings = {
       '1L': ['FACE CAP', 'DISPOSABLE RAINCOAT'],
       '4L': ['NOTEBOOK', 'PEN', 'POP SOCKET', 'MUG', 'NAPKIN BOX', 'MINI UMBRELLA'],
+      '5L': ['NOTEBOOK', 'PEN', 'POP SOCKET', 'MUG', 'NAPKIN BOX', 'MINI UMBRELLA'], // same as 4L
       '25L': ['LARGE UMBRELLA']
     };
 
