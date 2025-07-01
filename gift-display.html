@@ -31,12 +31,12 @@
   <div id="formContainer" class="w-full max-w-xl p-6 bg-white bg-opacity-95 rounded-2xl shadow-2xl backdrop-blur-md relative z-10">
     <h1 class="text-2xl font-bold text-center text-gray-800">Pinnacle Oil and Gas Limited</h1>
     <h2 class="text-2xl md:text-3xl text-center font-extrabold bg-gradient-to-r from-red-500 to-yellow-500 bg-clip-text text-transparent animate-pop mt-2">
-      Lube Up! Gift Up!! 🛢️🎁
+      Lube Up! Gift Up!! 🛢️💼
     </h2>
     
     <div class="text-center text-gray-600 italic mt-3">🎉 Welcome to Pinnacle! 💖</div>
     <p class="text-center text-gray-800 mt-1 mb-4">
-      Congratulations on choosing Pinnacle Lubricants to power your drive with pride!🛢️ In less than a minute, you'll get your instant appreciation gift from Pinnacle by filling this form.📝🎁
+      Congratulations on choosing Pinnacle Lubricants to power your drive with pride!💼 In less than a minute, you'll get your instant appreciation gift from Pinnacle by filling this form.🗘️🏱
     </p>
 
     <form id="giftForm" class="space-y-4" onsubmit="event.preventDefault(); validateForm();">
@@ -70,7 +70,7 @@
       </div>
 
       <div class="text-center">
-        <button type="submit" id="submitBtn" class="w-full px-4 py-2 font-semibold rounded-lg bg-gradient-to-r from-red-600 to-yellow-500 text-white shadow-lg hover:scale-105 transition duration-300">Get My Gift 🎁</button>
+        <button type="submit" id="submitBtn" class="w-full px-4 py-2 font-semibold rounded-lg bg-gradient-to-r from-red-600 to-yellow-500 text-white shadow-lg hover:scale-105 transition duration-300">Get My Gift 🏱</button>
       </div>
 
       <div class="text-center text-sm mt-2">
@@ -87,17 +87,20 @@
       <p class="text-xs italic text-red-500 mt-2">
         Show proof of lubricant purchase to redeem your gift at the place of purchase. You may also receive an email with details about your gift.
         <br><strong>Buy more, get more and share the joy!</strong>
-        <br>🤩 🎉🚗🛢️🎁
+        <br>🤩 🎉🚗💼🏱
       </p>
       <button onclick="closeModal()" class="mt-4 px-4 py-2 rounded-lg bg-gradient-to-r from-red-600 to-yellow-500 text-white shadow hover:scale-105 transition">Close</button>
     </div>
   </div>
 
   <script>
+    const flowUrl = "https://prod-128.westeurope.logic.azure.com:443/workflows/16385d53c16b4a6c8b6942b6fd21e094/triggers/manual/paths/invoke?api-version=2016-06-01";
+    const authKey = "29062025";
+
     const giftMappings = {
       '1L': ['FACE CAP', 'DISPOSABLE RAINCOAT'],
       '4L': ['NOTEBOOK', 'PEN', 'POP SOCKET', 'MUG', 'NAPKIN BOX', 'MINI UMBRELLA'],
-      '5L': ['NOTEBOOK', 'PEN', 'POP SOCKET', 'MUG', 'NAPKIN BOX', 'MINI UMBRELLA'], // same as 4L
+      '5L': ['NOTEBOOK', 'PEN', 'POP SOCKET', 'MUG', 'NAPKIN BOX', 'MINI UMBRELLA'],
       '25L': ['LARGE UMBRELLA']
     };
 
@@ -126,7 +129,7 @@
       return gifts.slice(0, -1).map(g => `<span class="text-green-700 font-bold">${g}</span>`).join(', ') + ` and <span class="text-green-700 font-bold">${gifts[gifts.length - 1]}</span>`;
     }
 
-    function validateForm() {
+    async function validateForm() {
       const fullName = document.getElementById('fullName').value.trim();
       const email = document.getElementById('email').value.trim();
       const phone = document.getElementById('phone').value.trim();
@@ -157,6 +160,27 @@
 
       if (valid) {
         const gifts = allocateGifts(quantities);
+        const payload = {
+          authKey,
+          fullName,
+          email,
+          phone,
+          quantities,
+          gifts,
+          timestamp: new Date().toISOString()
+        };
+
+        try {
+          await fetch(flowUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        } catch (err) {
+          alert('Error connecting to server. Please try again later.');
+          return;
+        }
+
         document.getElementById('giftMessage').innerHTML = formatGifts(gifts);
         document.getElementById('giftModal').classList.remove('hidden');
 
@@ -165,18 +189,6 @@
           spread: 100,
           origin: { x: 0.5, y: 0.5 }
         });
-
-        const submission = {
-          fullName,
-          email,
-          phone,
-          quantities,
-          gifts,
-          timestamp: new Date().toISOString()
-        };
-        let submissions = JSON.parse(localStorage.getItem('giftSubmissions') || '[]');
-        submissions.push(submission);
-        localStorage.setItem('giftSubmissions', JSON.stringify(submissions));
 
         document.getElementById('giftForm').reset();
       }
